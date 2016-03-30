@@ -3041,6 +3041,7 @@ extern unsigned int __machine_arch_type;
 #define MACH_TYPE_SPEAR900             3061
 #define MACH_TYPE_PCONTROL_G20         3062
 #define MACH_TYPE_DM368_LEOPARD        3449
+#define MACH_TYPE_DM368_ASC	           5000
 
 #ifdef CONFIG_ARCH_EBSA110
 # ifdef machine_arch_type
@@ -28372,6 +28373,18 @@ extern unsigned int __machine_arch_type;
 # define machine_is_dm355_leopard()	(machine_arch_type == MACH_TYPE_DM355_LEOPARD)
 #else
 # define machine_is_dm355_leopard()	(0)
+#endif
+
+#ifdef CONFIG_MACH_DM368_ASC
+# ifdef machine_arch_type
+#  undef machine_arch_type
+#  define machine_arch_type    __machine_arch_type
+# else
+#  define machine_arche_type MACH_TYPE_DM368_ASC
+# endif
+# define machine_is_dm368_asc()       (machine_arch_type == MACH_TYPE_DM368_ASC)
+#else
+# define machine_is_dm368_asc() 	(0)
 #endif
 
 #ifdef CONFIG_MACH_TS219

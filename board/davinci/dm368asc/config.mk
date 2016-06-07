@@ -1,5 +1,5 @@
 #
-# Tubin camera board based on the dm368  
+# ASC camera board based on the dm368  
 #	Board has has 1 bank of 128 MB DDR RAM
 #	Physical Address: 8000'0000 to 8800'0000
 #

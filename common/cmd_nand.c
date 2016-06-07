@@ -725,6 +725,19 @@ static int do_nand(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
 				ret = mtd_write_oob(nand, off, &ops);
 		} else if (raw) {
 			ret = raw_access(nand, addr, off, pagecount, read);
+		} else if (!strcmp(s, ".ubl")) { 
+			struct nand_chip *chip = nand->priv;
+			struct nand_ecclayout *layout_backup;
+
+			layout_backup = chip->ecc.layout;
+			if (chip->ecc.ubl_layout) {
+				chip->ecc.layout = chip->ecc.ubl_layout;
+			}
+			ret = nand_write_skip_bad(nand, off, &rwsize, NULL,
+						  maxsize, (u_char*)addr, 0);
+			chip->ecc.layout = layout_backup;
+
+
 		} else {
 			printf("Unknown nand command suffix '%s'.\n", s);
 			return 1;
@@ -841,9 +854,10 @@ static char nand_help_text[] =
 	"info - show available NAND devices\n"
 	"nand device [dev] - show or set current device\n"
 	"nand read - addr off|partition size\n"
-	"nand write - addr off|partition size\n"
+	"nand write[.ubl] - addr off|partition size\n"
 	"    read/write 'size' bytes starting at offset 'off'\n"
 	"    to/from memory address 'addr', skipping bad blocks.\n"
+	"    [.ubl] writes ECC code understandable by RBL\n"
 	"nand read.raw - addr off|partition [count]\n"
 	"nand write.raw - addr off|partition [count]\n"
 	"    Use read.raw/write.raw to avoid ECC and access the flash as-is.\n"

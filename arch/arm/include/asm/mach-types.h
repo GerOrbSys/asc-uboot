@@ -1108,6 +1108,7 @@ extern unsigned int __machine_arch_type;
 #define MACH_TYPE_KZM9G                4140
 #define MACH_TYPE_COLIBRI_T30          4493
 #define MACH_TYPE_APALIS_T30           4513
+#define MACH_TYPE_DM368_ASC	       5000 
 
 #ifdef CONFIG_ARCH_EBSA110
 # ifdef machine_arch_type
@@ -13672,6 +13673,18 @@ extern unsigned int __machine_arch_type;
 #else
 # define machine_is_dm368_leopard()	(0)
 #endif
+
+#ifdef CONFIG_MACH_DM368_ASC
+# ifdef machine_arch_type
+#  undef machine_arch_type
+#  define machine_arch_type    __machine_arch_type
+# else
+#  define machine_arche_type MACH_TYPE_DM368_ASC
+# endif
+# define machine_is_dm368_asc()       (machine_arch_type == MACH_TYPE_DM368_ASC)
+#else 
+# define machine_is_dm368_asc() 	(0)
+#endif 
 
 #ifdef CONFIG_MACH_OMAP_MCOP
 # ifdef machine_arch_type

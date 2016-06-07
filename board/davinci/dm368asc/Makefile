@@ -3,4 +3,4 @@
 #
 #
 
-obj-y	:= dm368tubin.o
+obj-y	:= dm368asc.o

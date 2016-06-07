@@ -1,12 +1,12 @@
-if TARGET_DAVINCI_DM368TUBIN
+if TARGET_DAVINCI_DM368ASC
 
 config SYS_BOARD
-	default "dm368tubin"
+	default "dm368asc"
 
 config SYS_VENDOR
 	default "davinci"
 
 config SYS_CONFIG_NAME
-	default "davinci_dm368tubin"
+	default "davinci_dm368asc"
 
 endif

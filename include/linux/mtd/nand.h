@@ -519,7 +519,8 @@ struct nand_ecc_ctrl {
 	int prepad;
 	int postpad;
 	struct nand_ecclayout	*layout;
-	void *priv;
+	struct nand_ecclayout   *ubl_layout;
+        void *priv;
 	void (*hwctl)(struct mtd_info *mtd, int mode);
 	int (*calculate)(struct mtd_info *mtd, const uint8_t *dat,
 			uint8_t *ecc_code);

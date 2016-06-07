@@ -34,6 +34,9 @@ config TARGET_DAVINCI_DM355LEOPARD
 config TARGET_DAVINCI_DM365EVM
 	bool "DM365 EVM board"
 
+config TARGET_DAVINCI_DM368ASC
+        bool "DM368 ASC"
+
 config TARGET_DAVINCI_DM6467EVM
 	bool "DM6467 EVM board"
 
@@ -68,6 +71,7 @@ source "board/davinci/dm355evm/Kconfig"
 source "board/davinci/dm355leopard/Kconfig"
 source "board/davinci/dm365evm/Kconfig"
 source "board/davinci/dm6467evm/Kconfig"
+source "board/davinci/dm368asc/Kconfig"
 source "board/davinci/dvevm/Kconfig"
 source "board/davinci/ea20/Kconfig"
 source "board/davinci/schmoogie/Kconfig"

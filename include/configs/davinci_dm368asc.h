@@ -6,8 +6,8 @@
 #ifndef __CONFIG_H
 #define __CONFIG_H
 
-/* Tubin Davinci DM368 Board */
-#define DAVINCI_DM368TUBIN
+/* ASC Davinci DM368 Board */
+#define DAVINCI_DM368ASC
 
 #define CONFIG_SKIP_LOWLEVEL_INIT	/* U-Boot is a 3rd stage loader */
 #define CONFIG_SYS_NO_FLASH		/* that is, no *NOR* flash */
@@ -24,6 +24,7 @@
 #define CONFIG_NR_DRAM_BANKS		1
 #define PHYS_SDRAM_1			0x80000000
 #define PHYS_SDRAM_1_SIZE		(128 << 20)	/* 128 MiB */
+#define CONFIG_MAX_RAM_BANK_SIZE 	(256 << 20)	/* 128 MiB */
 
 /* Serial Driver info: UART0 for console  */
 #define CONFIG_SYS_NS16550
@@ -31,27 +32,37 @@
 #define CONFIG_SYS_NS16550_REG_SIZE	-4
 #define CONFIG_SYS_NS16550_COM1		0x01c20000
 #define CONFIG_SYS_NS16550_CLK		CONFIG_SYS_HZ_CLOCK
+#define CONFIG_SYS_BAUDRATE_TABLE	{ 9600, 19200, 38400, 57600, 115200 }
 #define CONFIG_CONS_INDEX		1
 #define CONFIG_BAUDRATE			115200
 
-/* EEPROM definitions for EEPROM on DM365 EVM */
-#define CONFIG_SYS_I2C_EEPROM_ADDR_LEN		2
-#define CONFIG_SYS_I2C_EEPROM_ADDR		0x50
-#define CONFIG_SYS_EEPROM_PAGE_WRITE_BITS	6
-#define CONFIG_SYS_EEPROM_PAGE_WRITE_DELAY_MS	20
-
 /* Network Configuration */
+#define CONFIG_ETHADDR 			"00:0C:0C:A0:02:b5"	
 #define CONFIG_DRIVER_TI_EMAC
+#define CONFIG_EMAC_MDIO_PHY_NUM	0
 #define CONFIG_MII
+#define CONFIG_BOOTP_DEFAULT
 #define CONFIG_BOOTP_DNS
 #define CONFIG_BOOTP_DNS2
 #define CONFIG_BOOTP_SEND_HOSTNAME
 #define CONFIG_NET_RETRY_COUNT	10
+#define CONFIG_NET_MULTI
 
 /* Pin Multiplexing */
 #define CONFIG_PIN_MUX
 
-/* SPI */
+/* I2C */
+#define CONFIG_SYS_I2C
+#define CONFIG_SYS_I2C_DAVINCI
+#define CONFIG_SYS_DAVINCI_I2C_SPEED		400000
+#define CONFIG_SYS_DAVINCI_I2C_SLAVE		0x10	/* SMBus host address */
+
+/* GPIO */
+#define CONFIG_GPIO
+#define CONFIG_DAVINCI_GPIO
+/* #define CONFIG_CMD_GPIO */
+
+ /* SPI */
 #define CONFIG_CMD_SPI
 #define CONFIG_DAVINCI_SPI
 #define SPI4_DUPLEX
@@ -64,26 +75,12 @@
 #define CONFIG_SYS_SPI3_BASE		0x01c68000
 #define CONFIG_SYS_SPI4_BASE		0x01c23000
 
-//  SPI_0-3_CLK = PLLC1_SYSCLK4 = (default) 121MHz
-//  SPI_4_CLK = MXI1/MXO1 = (default) 24MHz
 #define CONFIG_SYS_SPI_CLK			121000000
-//#define CONFIG_SYS_SPI_CLK			24000000
-
-/* I2C */
-#define CONFIG_SYS_I2C
-#define CONFIG_SYS_I2C_DAVINCI
-#define CONFIG_SYS_DAVINCI_I2C_SPEED		400000
-#define CONFIG_SYS_DAVINCI_I2C_SLAVE		0x10	/* SMBus host address */
-
-/* GPIO */
-#define CONFIG_GPIO
-#define CONFIG_DAVINCI_GPIO
-#define CONFIG_CMD_GPIO
 
 /* NAND: socketed, two chipselects, normally 2 GBytes */
 #define CONFIG_NAND_DAVINCI
 #define CONFIG_SYS_NAND_CS		2
-#define CONFIG_SYS_NAND_USE_FLASH_BBT
+#undef CONFIG_SYS_NAND_USE_FLASH_BBT
 #define CONFIG_SYS_NAND_4BIT_HW_ECC_OOBFIRST
 #define CONFIG_SYS_NAND_PAGE_2K
 
@@ -141,11 +138,11 @@
 /* U-Boot command configuration */
 #include <config_cmd_default.h>
 
-#undef CONFIG_CMD_BDI
 #undef CONFIG_CMD_FLASH
 #undef CONFIG_CMD_FPGA
 #undef CONFIG_CMD_SETGETDCR
 
+#define CONFIG_CMD_CACHE
 #define CONFIG_CMD_ASKENV
 #define CONFIG_CMD_DHCP
 #define CONFIG_CMD_I2C
@@ -177,11 +174,11 @@
 
 /* U-Boot general configuration */
 #define CONFIG_BOOTFILE		"uImage"	/* Boot file name */
-#define CONFIG_SYS_PROMPT	"DM368 TUBIN # "/* Monitor Command Prompt */
+#define CONFIG_SYS_PROMPT	"DM368 ASC # "/* Monitor Command Prompt */
 #define CONFIG_SYS_CBSIZE	1024		/* Console I/O Buffer Size  */
 #define CONFIG_SYS_PBSIZE			/* Print buffer size */ \
 		(CONFIG_SYS_CBSIZE + sizeof(CONFIG_SYS_PROMPT) + 16)
-#define CONFIG_SYS_MAXARGS	16		/* max number of command args */
+#define CONFIG_SYS_MAXARGS	32		/* max number of command args */
 #define CONFIG_SYS_HUSH_PARSER
 #define CONFIG_SYS_LONGHELP
 
@@ -194,24 +191,36 @@
 
 #if defined(CONFIG_MMC) && !defined(CONFIG_ENV_IS_IN_NAND)
 #define CONFIG_CMD_ENV
-#define CONFIG_ENV_SIZE		(16 << 10)	/* 16 KiB */
-#define CONFIG_ENV_OFFSET	(51 << 9)	/* Sector 51 */
-#define CONFIG_ENV_IS_IN_MMC
-#undef CONFIG_ENV_IS_IN_FLASH
 #endif
 
+
 #define CONFIG_BOOTDELAY	3
-#define CONFIG_BOOTCOMMAND \
-		"dhcp;bootm"
 #define CONFIG_BOOTARGS \
 		"console=ttyS0,115200n8 " \
-		"root=/dev/mmcblk0p1 rootwait rootfstype=ext3 ro"
+		"root=/dev/mmcblk0p2 rw rootwait ip=off"
+
+#define CONFIG_EXTRA_ENV_SETTINGS \
+	"loadaddr=0x82000000\0" \
+	"loadbootenv=fatload mmc 0 ${loadaddr} uEnv.txt\0" \
+	"importbootenv=echo Importing environment from mmc ...; env import -t ${loadaddr} ${filesize}\0" \
+	"loaduimage=fatload mmc 0 ${loadaddr} uImage\0"
+
+#define CONFIG_BOOTCOMMAND \
+	"if mmc rescan 0 ; then " \
+		"if run loadbootenv ; then " \
+			"run importbootenv ; " \
+			"if test -n ${uenvcmd} ; then " \
+				"run uenvcmd; " \
+			"fi ;" \
+		"fi ;" \
+	"fi"
 
 #define CONFIG_CMDLINE_EDITING
 #define CONFIG_VERSION_VARIABLE
 #define CONFIG_TIMESTAMP
 
 /* U-Boot memory configuration */
+#define CONFIG_STACKSIZE		(256 << 10)	/* 256 KiB */
 #define CONFIG_SYS_MALLOC_LEN		(1 << 20)	/* 1 MiB */
 #define CONFIG_SYS_MEMTEST_START	0x87000000	/* physical address */
 #define CONFIG_SYS_MEMTEST_END		0x88000000	/* test 16MB RAM */
